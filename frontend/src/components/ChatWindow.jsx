@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';  // ← Added useCallback
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 import MessageBubble from './MessageBubble';
 import InputBar from './InputBar';
 
@@ -34,10 +36,6 @@ const ChatWindow = ({ language, selectedState }) => {
     };
     setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
-
-    // Get API URL from environment variable (for production) or fallback to localhost
-    //const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-    const API_URL = 'https://ingres-chatbot-pyv6.onrender.com'; //temporarily
 
     try {
       const response = await axios.post(`${API_URL}/chat`, {

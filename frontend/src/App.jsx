@@ -4,6 +4,8 @@ import ChatWindow from './components/ChatWindow';
 import Sidebar from './components/Sidebar';
 import './App.css';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 function App() {
   const [language, setLanguage] = useState('en');
   const [states, setStates] = useState([]);
@@ -11,7 +13,6 @@ function App() {
 
   useEffect(() => {
     // Fetch available states
-    const API_URL = 'https://ingres-chatbot-pyv6.onrender.com';
     axios.get(`${API_URL}/states`)
       .then(response => setStates(response.data))
       .catch(error => console.error('Error fetching states:', error));

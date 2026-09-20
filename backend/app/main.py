@@ -8,6 +8,7 @@ from .translation import translator
 from .data_processor import load_ingres_data_to_db
 import logging
 import httpx
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,14 +25,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Rasa configuration
-RASA_SERVER_URL = "http://localhost:5005"
-USE_RASA = True  # Set to False to disable Rasa
+# Rasa configuration — read from environment variable
+RASA_SERVER_URL = os.environ.get("RASA_SERVER_URL", "http://localhost:5005")
+USE_RASA = os.environ.get("USE_RASA", "true").lower() == "true"
 
 @app.on_event("startup")
 async def startup_event():
     try:
-        count = load_ingres_data_to_db("ingres-data.xlsx")
+        # Use absolute path relative to this module so it works in any working directory
+        xlsx_path = os.path.join(os.path.dirname(__file__), "..", "ingres-data.xlsx")
+        xlsx_path = os.path.abspath(xlsx_path)
+        count = load_ingres_data_to_db(xlsx_path)
         logger.info(f"✓ Loaded {count} records from INGRES dataset")
     except Exception as e:
         logger.error(f"✗ Error loading data: {e}")
